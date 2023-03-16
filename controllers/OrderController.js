@@ -59,6 +59,10 @@ class OrderController {
           });
     };
 
+    static async postOrder(req, res) {
+        
+    }
+
 }
 
 

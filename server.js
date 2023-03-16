@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const session = require('express-session');
 const flash = require('connect-flash');
+const config = require('./config')
+const { auth } = require('express-openid-connect');
 require('dotenv').config();
 
 
@@ -15,6 +17,8 @@ app.use(express.json());
 app.set('view engine', 'ejs');
 app.use('/', router);
 app.use(express.static('public'));
+app.use(auth(config));
+
 
 app.use(session({
   secret: 'secret',

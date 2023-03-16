@@ -1,21 +1,22 @@
 const express = require('express');
 const router = express.Router();
-const AppController = require('../controllers/AppController');
-const AuthController = require('../controllers/AuthController');
+const AuthController = require("../controllers/AuthController");
+const UserController = require("../controllers/UserController");
+const jwt = require("../middlewares/jwt");
+const OrderController = require("../controllers/OrderController");
 
 
+router.post('/signUp', AuthController.signUp);
+router.post('/login', AuthController.login);
+router.get('/profile', jwt, UserController.getProfile);
+router.post('/profile', jwt, UserController.updateProfile);
+router.get('/address', jwt, UserController.getAddress);
+router.post('/address', jwt, UserController.updateAddress);
+router.get('/orders', jwt, OrderController.getOrder);
+router.get('/orders/:id', jwt, OrderController.getOrderById);
+router.get('/orders/:id/delete', OrderController.deleteOrder);
+router.post('/orders', OrderController.postOrder);
 
-
-
-router.get('/', AppController.homePage);
-router.get('/about', AppController.aboutUs);
-router.get('/login', AuthController.login);
-router.get('/auth/google', AuthController.authGoogle);
-router.get('/auth/google/callback', AuthController.authGoogle);
-router.get('/auth/facebook/callback', AuthController.authFacebook);
-router.get('/auth/facebook', AuthController.authFacebook);
-router.get('/auth/twitter', AuthController.authTwitter);
-router.get('/auth/twitter/callback', AuthController.authTwitter);
 
 
 module.exports = router
