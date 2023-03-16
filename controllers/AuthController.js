@@ -1,77 +1,74 @@
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
+const config = require("../config");
 
 class AuthController {
   static async signUp(req, res) {
-    let user = new User();
-    user.name = req.body.name;
-    user.email = req.body.email;
-    user.password = req.body.password;
-    user.picture = user.gravatar();
-    user.isSeller = req.body.isSeller;
-    User.findOne({
-      email: req.body.email
-    }, (err, existingUser) => {
-      if (existingUser) {
-        res.json({
+    try {
+      const userExists = await User.findOne({ email: req.body.email });
+      if (userExists) {
+        return res.status(409).json({
           success: false,
-          message: "Account with this email already exist",
-        });
-      } else {
-        user.save();
-        var token = jwt.sign({
-          user: user,
-        },
-        config.secret, {
-          expiresIn: "7d",
-        }
-      );
-
-      res.json({
-        success: true,
-        message: "Token Success",
-        token: token,
+          message: "Account with this email already exists",
         });
       }
-    });
-  };
 
-  static async login(req, res, next) {
-    User.findOne({
-      email: req.body.email
-    }, (err, user) => {
-      if (err) throw err;
-  
-      if (!user) {
-        res.json({
-          success: false,
-          message: "User account cannot be found",
-        });
-      } else if (user) {
-        var validPassword = user.comparePassword(req.body.password);
+      const user = new User()
+        user.name = req.body.name;
+        user.email = req.body.email;
+        user.password = req.body.password;
+        user.picture = user.gravatar();
+        user.isSeller = req.body.isSeller;
+
+      await user.save();
+      const token = jwt.sign({ user }, config.secret, { expiresIn: "7d" });
+
+      res.status(201).json({
+        success: true,
+        message: "Account created successfully",
+        token,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        success: false,
+        message: "Something went wrong. Please try again later",
+      });
+    }
+  }
+
+    static async login(req, res) {
+      try {
+        const user = await User.findOne({ email: req.body.email }).exec();
+        if (!user) {
+          res.status(401).json({
+            success: false,
+            message: "User account cannot be found",
+          });
+          return;
+        }
+        const validPassword = user.comparePassword(req.body.password);
         if (!validPassword) {
-          res.json({
+          res.status(401).json({
             success: false,
             message: "Incorrect password",
           });
-        } else {
-          var token = jwt.sign({
-              user: user,
-            },
-            config.secret, {
-              expiresIn: "7d",
-            }
-          );
-  
-          res.json({
-            success: true,
-            mesage: "Enjoy your token",
-            token: token,
-          });
+          return;
         }
+        const token = jwt.sign({ user }, config.secret, { expiresIn: "7d" });
+        res.json({
+          success: true,
+          message: "Enjoy your token",
+          token,
+        });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({
+          success: false,
+          message: "Internal server error",
+        });
       }
-    });
-  };
+    } 
   
 }
 
