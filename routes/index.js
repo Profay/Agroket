@@ -6,6 +6,7 @@ const AuthController = require('../controllers/AuthController');
 
 
 
+
 router.get('/', AppController.homePage);
 router.get('/about', AppController.aboutUs);
 router.get('/login', AuthController.login);
