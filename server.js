@@ -21,16 +21,15 @@ app.use(bodyParser.urlencoded({
 app.use(morgan("dev"));
 app.use(cors());
 
-//const userRoutes = require("./routes/account");
-//const mainRoutes = require("./routes/main");
-//const sellerRoutes = require("./routes/seller");
-//const productSearchRoutes = require("./routes/product-search");
+const users = require("./routes/index");
+const main = require("./routes/main");
+const sellers = require("./routes/seller");
 
-//express application using Routes from this application
-app.use("/", router);
-//app.use("/api/accounts", userRoutes);
-//app.use("/api/seller", sellerRoutes);
-//app.use("/api/search", productSearchRoutes);
+
+app.use("/api", main);
+app.use("/api/accounts", users);
+app.use("/api/seller", sellers);
+
 
 
 mongoose.connect(process.env.MONGO_URI)

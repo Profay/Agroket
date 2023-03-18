@@ -36,34 +36,6 @@ const ProductSchema = new Schema({
 });
 
 
-//Adding Plug-ins to ProductSchema like Algolia to facilitate searching of products
-ProductSchema.plugin(deepPopulate); //Facilitate rating of the product
-ProductSchema.plugin(mongooseAlgolia, {
-  appId: "",
-  apiKey: "",
-  indexName: "Ecommercever1",
-  selector: "_id title image reviews description price owner created averageRating",
-  populate: {
-    path: "owner reviews",
-    select: "name rating",
-  },
-  defaults: {
-    author: "uknown",
-  },
-  mappings: {
-    title: function (value) {
-      return `${value}`;
-    },
-  },
-  debug: true,
-});
 
-//Wrapping product schema to Model and synchronizing Algolia API
-let Model = mongoose.model("Product", ProductSchema);
-Model.SyncToAlgolia();
-Model.SetAlgoliaSettings({
-  searchableAttributes: ["title"],
-});
 
-//Exporting the wrapped Model(Algolia API + ProductSchema)
-module.exports = Model;
+module.exports = mongoose.model("Product", ProductSchema);

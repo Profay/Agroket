@@ -1,9 +1,9 @@
 const Product = require("../models/productModel");
-const faker = require("faker");
+const hoaxer = require("hoaxer");
 
 
 class SellerController {
-    static async postProduct(req, res) {
+    static async findProductById(req, res, next) {
         try {
             const result = await Product.findByIdAndUpdate(
               { _id: req.params.id },
@@ -16,7 +16,7 @@ class SellerController {
           }          
     }
 
-    static async getProducts(req, res) {
+    static async getProducts(req, res, next) {
         try {
             const products = await Product.find({ owner: req.decoded.user._id })
               .populate("owner")
@@ -35,7 +35,7 @@ class SellerController {
           
     }
 
-    static async addProduct(req, res) {
+    static async addProduct(req, res, next) {
         console.log(upload);
         console.log(req.file);
         const product = new Product();
@@ -54,7 +54,7 @@ class SellerController {
         });
     }
 
-    static async UpdateProduct(req, res) {
+    static async updateProduct(req, res, next) {
         try {
             const result = await Product.findByIdAndUpdate(
               { _id: req.body.id },
@@ -82,17 +82,16 @@ class SellerController {
           }          
     }
 
-    static async fakerTest(req, res) {
-        router.get("/faker/test", async (req, res, next) => {
+    static async hoaxerTest(req, res, next) {
             try {
-              for (i = 0; i < 15; i++) {
+              for (let i = 0; i < 15; i++) {
                 let product = new Product();
                 product.category = "5acc1902580ba509c6622bd7";
                 product.owner = "5acbfed6571913c9a9e98135";
-                product.image = faker.image.cats();
-                product.title = faker.commerce.productName();
-                product.description = faker.lorem.words();
-                product.price = faker.commerce.price();
+                product.image = hoaxer.image.cats();
+                product.title = hoaxer.commerce.productName();
+                product.description = hoaxer.lorem.words();
+                product.price = hoaxer.commerce.price();
                 await product.save();
               }
           
@@ -102,7 +101,6 @@ class SellerController {
             } catch (error) {
               next(error);
             }
-          });          
     }
 
 
