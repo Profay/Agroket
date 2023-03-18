@@ -1,216 +1,232 @@
-// Account.JS file to maintain every users account details(SignUp,Login,Orders) and handle routes
+//main.JS file to facilitate REST services for Products,Categories, Review and payment functionality
 
 //Including the required packages and assigning it to Local Variables
 const router = require("express").Router();
-const jwt = require("jsonwebtoken");
-const User = require("../models/user");
+const async = require("async");
+const stripe = require("stripe")("sk_test_wkcPYTXmqh2Y1Qayai7cW1Bk");
+
+const Category = require("../models/category");
+const Product = require("../models/product");
+const Review = require("../models/review");
 const Order = require("../models/order");
-const config = require("../config");
+
 const checkJWT = require("../middlewares/check-jwt");
 
-//Function to facilitate Sign Up feature
-router.post("/signup", (req, res, next) => {
-  let user = new User();
-  user.name = req.body.name;
-  user.email = req.body.email;
-  user.password = req.body.password;
-  user.picture = user.gravatar();
-  user.isSeller = req.body.isSeller;
-
-  User.findOne({
-    email: req.body.email
-  }, (err, existingUser) => {
-    if (existingUser) {
-      res.json({
-        success: false,
-        message: "Account with that email is already exists",
-      });
-    } else {
-      user.save();
-
-      var token = jwt.sign({
-          user: user,
-        },
-        config.secret, {
-          expiresIn: "7d",
-        }
-      );
+//Function to facilitate obtaining the product information
+router.get("/products", (req, res, next) => {
+  const perPage = 10;
+  const page = req.query.page;
+  async.parallel(
+    [
+      function (callback) {
+        Product.count({}, (err, count) => {
+          var totalProducts = count;
+          callback(err, totalProducts);
+        });
+      },
+      function (callback) {
+        Product.find({
+            isDeleted: false
+          })
+          .skip(perPage * page)
+          .limit(perPage)
+          .populate("category")
+          .populate("owner")
+          .exec((err, products) => {
+            if (err) return next(err);
+            callback(err, products);
+          });
+      },
+    ],
+    function (err, results) {
+      var totalProducts = results[0];
+      var products = results[1];
 
       res.json({
         success: true,
-        message: "Token Success",
-        token: token,
+        message: "Product",
+        products: products,
+        totalProducts: totalProducts,
+        pages: Math.ceil(totalProducts / perPage),
+        currentProducts: products.length,
       });
     }
-  });
+  );
 });
 
-//Function to facilitate login feature
-router.post("/login", (req, res, next) => {
-  User.findOne({
-    email: req.body.email
-  }, (err, user) => {
-    if (err) throw err;
-
-    if (!user) {
-      res.json({
-        success: false,
-        message: "User account cannot be found",
-      });
-    } else if (user) {
-      var validPassword = user.comparePassword(req.body.password);
-      if (!validPassword) {
-        res.json({
-          success: false,
-          message: "Incorrect password",
-        });
-      } else {
-        var token = jwt.sign({
-            user: user,
-          },
-          config.secret, {
-            expiresIn: "7d",
-          }
-        );
-
-        res.json({
-          success: true,
-          mesage: "Enjoy your token",
-          token: token,
-        });
-      }
-    }
-  });
-});
-
-//Function to handle Profile API (GET,POST) functionality for authenticated users
+//Function to facilitate categories GET and POST requests
 router
-  .route("/profile")
-  .get(checkJWT, (req, res, next) => {
-    User.findOne({
-      _id: req.decoded.user._id
-    }, (err, user) => {
+  .route("/categories")
+  .get((req, res, next) => {
+    Category.find({}, (err, categories) => {
       res.json({
         success: true,
-        user: user,
-        message: "Successful",
+        message: "Success",
+        categories: categories,
       });
     });
   })
-  .post(checkJWT, (req, res, next) => {
-    User.findOne({
-      _id: req.decoded.user._id
-    }, (err, user) => {
-      if (err) return next(err);
-
-      if (req.body.name) user.name = req.body.name;
-      if (req.body.email) user.email = req.body.email;
-      if (req.body.password) user.password = req.body.password;
-
-      user.isSeller = req.body.isSeller;
-
-      user.save();
-      res.json({
-        success: true,
-        message: "Profile successfully edited",
-      });
+  .post((req, res, next) => {
+    let category = new Category();
+    category.name = req.body.category;
+    category.save();
+    res.json({
+      success: true,
+      message: "Successful",
     });
   });
 
-router
-  .route("/address")
-  .get(checkJWT, (req, res, next) => {
-    User.findOne({
-      _id: req.decoded.user._id
-    }, (err, user) => {
+//Function to facilitate get request of specific categories
+router.get("/categories/:id", (req, res, next) => {
+  const perPage = 10;
+  const page = req.query.page;
+  async.parallel(
+    [
+      function (callback) {
+        Product.count({
+          category: req.params.id
+        }, (err, count) => {
+          var totalProducts = count;
+          callback(err, totalProducts);
+        });
+      },
+      function (callback) {
+        Product.find({
+            category: req.params.id
+          })
+          .skip(perPage * page)
+          .limit(perPage)
+          .populate("category")
+          .populate("owner")
+          .populate("reviews")
+          .exec((err, products) => {
+            if (err) return next(err);
+            callback(err, products);
+          });
+      },
+      function (callback) {
+        Category.findOne({
+          _id: req.params.id
+        }, (err, category) => {
+          callback(err, category);
+        });
+      },
+    ],
+    function (err, results) {
+      var totalProducts = results[0];
+      var products = results[1];
+      var category = results[2];
       res.json({
         success: true,
-        address: user.address,
-        message: "Successful",
+        message: "category",
+        products: products,
+        categoryName: category.name,
+        totalProducts: totalProducts,
+        pages: Math.ceil(totalProducts / perPage),
       });
-    });
-  })
-  .post(checkJWT, (req, res, next) => {
-    User.findOne({
-      _id: req.decoded.user._id
-    }, (err, user) => {
-      if (err) return next(err);
+    }
+  );
+});
 
-      if (req.body.addr1) user.address.addr1 = req.body.addr1;
-      if (req.body.addr2) user.address.addr2 = req.body.addr2;
-      if (req.body.city) user.address.city = req.body.city;
-      if (req.body.state) user.address.state = req.body.state;
-      if (req.body.country) user.address.country = req.body.country;
-      if (req.body.postalCode) user.address.postalCode = req.body.postalCode;
-
-      user.save();
-      res.json({
-        success: true,
-        message: "Address successfully edited",
-      });
-    });
-  });
-
-router.post("/orders", (req, res) => {});
-
-//Function to handle Orders functionality for authenticated users
-router.get("/orders", checkJWT, (req, res, next) => {
-  Order.find({
-      owner: req.decoded.user._id
-    })
-    .populate("products.product")
-    .populate("owner")
-    .exec((err, orders) => {
+router.post("/product/:id/qty", (req, res) => {
+  Product.findByIdAndUpdate({
+      _id: req.params.id
+    }, {
+      quantity: req.body.qty
+    },
+    function (err, result) {
       if (err) {
-        res.json({
-          success: false,
-          message: "Order cannot be found",
-        });
+        res.send(err);
       } else {
-        res.json({
-          success: true,
-          message: "Order found",
-          orders: orders,
-        });
+        res.send(result);
       }
-    });
-});
-
-router.get("/orders/:id/delete", (req, res) => {
-  Order.remove({
-    _id: req.params.id
-  }, function (err, result) {
-    if (err) {
-      console.log(err);
-      res.send(err);
-    } else {
-      console.log(result);
-      res.send(result);
     }
-  });
+  );
 });
 
-//Function to handle specific order functionality
-router.get("/orders/:id", checkJWT, (req, res, next) => {
-  Order.findOne({
+//Function to facilitate get request of specific product
+router.get("/product/:id", (req, res, next) => {
+  Product.findById({
       _id: req.params.id
     })
-    .deepPopulate("products.product.owner")
+    .populate("category")
     .populate("owner")
-    .exec((err, order) => {
+    .deepPopulate("reviews.owner")
+    .exec((err, product) => {
       if (err) {
         res.json({
           success: false,
-          message: "Order cannot be found",
+          message: "Product is not found",
         });
       } else {
-        res.json({
-          success: true,
-          message: "Order found",
-          order: order,
-        });
+        if (product) {
+          res.json({
+            success: true,
+            product: product,
+          });
+        }
       }
     });
 });
 
+//Function to facilitate review functionality
+router.post("/review", checkJWT, (req, res, next) => {
+  async.waterfall([
+    function (callback) {
+      Product.findOne({
+        _id: req.body.productId
+      }, (err, product) => {
+        if (product) {
+          callback(err, product);
+        }
+      });
+    },
+    function (product) {
+      let review = new Review();
+      review.owner = req.decoded.user._id;
+
+      if (req.body.title) review.title = req.body.title;
+      if (req.body.description) review.description = req.body.description;
+      review.rating = req.body.rating;
+
+      product.reviews.push(review._id);
+      product.save();
+      review.save();
+      res.json({
+        success: true,
+        message: "Successfully added the review",
+      });
+    },
+  ]);
+});
+
+//Function to facilitate payment functionality  using STRIPE API
+router.post("/payment", checkJWT, (req, res, next) => {
+  const currentCharges = Math.round(req.body.total);
+
+  const products = req.body.products;
+  console.log("PAYMENTGW: products", products);
+
+  let order = new Order();
+  order.owner = req.decoded.user._id;
+  order.totalPrice = currentCharges;
+  let i = 0;
+  products.map((product) => {
+    console.log("PAYMENTS_GW: Product ", product.title);
+    order.products.push({
+      product: product.product,
+      quantity: product.quantity,
+    });
+    i++;
+  });
+
+  order.save();
+
+  res.json({
+    success: true,
+    message: "Successfully made a payment",
+  });
+});
+
+//Exporting the module
 module.exports = router;

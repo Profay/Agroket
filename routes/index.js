@@ -6,7 +6,7 @@ const jwt = require("../middlewares/jwt");
 const OrderController = require("../controllers/OrderController");
 
 
-router.post('/signUp', AuthController.signUp);
+router.post('/signup', AuthController.signUp);
 router.post('/login', AuthController.login);
 router.get('/profile', jwt, UserController.getProfile);
 router.post('/profile', jwt, UserController.updateProfile);
