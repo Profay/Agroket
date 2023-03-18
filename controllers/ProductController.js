@@ -120,7 +120,7 @@ class ProductController {
           }          
     }
 
-    static async getProductsById(req, res, next) {
+    static async getProductById(req, res, next) {
         try {
             const product = await Product.findById(req.params.id)
               .populate("category")
