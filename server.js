@@ -26,9 +26,9 @@ const main = require("./routes/main");
 const sellers = require("./routes/seller");
 
 
-app.use("/api", main);
-app.use("/api/accounts", users);
-app.use("/api/seller", sellers);
+app.use("/", main);
+app.use("/accounts", users);
+app.use("/seller", sellers);
 
 
 
