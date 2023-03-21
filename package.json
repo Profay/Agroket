@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/Profay/Agroket#readme",
   "dependencies": {
+    "@angular/core": "^15.2.3",
+    "@angular/platform-browser-dynamic": "^15.2.3",
     "aws-sdk": "^2.1339.0",
     "bcrypt-nodejs": "^0.0.3",
     "connect-flash": "^0.1.1",
@@ -43,6 +45,11 @@
     "passport-facebook": "^3.0.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-twitter": "^1.0.4",
+    "protractor": "^7.0.0",
     "redis": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/jasmine": "^4.3.1",
+    "@types/mocha": "^10.0.1"
   }
 }
