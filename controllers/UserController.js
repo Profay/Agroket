@@ -5,15 +5,11 @@ class UserController {
   static async getProfile(req, res, next) {
     try {
       const user = await User.findOne({ _id: req.decoded.user._id });
-      res.json({
-        success: true,
-        user: user,
-        message: "Successful",
-      });
+      res.render('profile', { user });
     } catch (err) {
       next(err);
     }
-  };  
+  };
 
   static async updateProfile(req, res, next) {
     try {
@@ -39,15 +35,11 @@ class UserController {
   
       await user.save();
   
-      res.json({
-        success: true,
-        message: "Profile successfully edited",
-      });
+      res.redirect('/accounts/profile');
     } catch (err) {
       return next(err);
     }
-  };
-  
+  };  
 
   static async getAddress(req, res, next) {
     try {

@@ -25,10 +25,7 @@ router.get('/login', (req, res) => {
 
 router.post('/login', AuthController.login);
 
-router.get('/profile', jwt, (req, res) => {
-  // render the profile page HTML file
-  res.render('profile');
-});
+router.get('/profile', jwt, UserController.getProfile);
 
 router.post('/profile', jwt, UserController.updateProfile);
 

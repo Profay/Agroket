@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>User Profile</title>
+  </head>
+  <body>
+    <h1>User Profile</h1>
+    <p>Name: <%= user.name %></p>
+    <p>Email: <%= user.email %></p>
+    <p>Password: <%= user.password %></p>
+    <p>Is Seller: <%= user.isSeller %></p>
+
+    <h2>Edit Profile</h2>
+    <form method="POST" action="/accounts/profile">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name" value="<%= user.name %>" required>
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" value="<%= user.email %>" required>
+
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required>
+
+      <label for="isSeller">Is Seller:</label>
+      <input type="checkbox" id="isSeller" name="isSeller" <%= user.isSeller ? "checked" : "" %>>
+
+      <button type="submit">Update Profile</button>
+    </form>
+
+    <br>
+    <p><a href="/accounts/logout">Logout</a></p>
+  </body>
+</html>

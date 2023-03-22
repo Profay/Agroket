@@ -1,9 +1,8 @@
-
 const jwt = require('jsonwebtoken');
 const config = require('../config');
 
 module.exports = function (req, res, next) {
-  let token = req.headers["authorization"];
+  let token = req.cookies.token;
 
   if (token) {
     jwt.verify(token, config.secret, function (err, decoded) {

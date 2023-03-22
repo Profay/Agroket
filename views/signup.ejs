@@ -5,7 +5,10 @@
   </head>
   <body>
     <h1>Sign Up</h1>
-    <form action="/accounts/signUp" method="post">
+    <% if (typeof error !== 'undefined') { %>
+        <div style="color: red;"><%= error %></div>
+    <% } %>
+    <form action="/accounts/signup" method="post">
       <div>
         <label for="name">Name</label>
         <input type="text" id="name" name="name" required>
