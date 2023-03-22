@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Awesome Website</title>
+  </head>
+  <body>
+    <h1>Welcome to My Awesome Website!</h1>
+    
+    <% if (loggedIn) { %>
+      <p>Hello, <%= user.name %>!</p>
+      <a href="/accounts/logout">Log Out</a>
+    <% } else { %>
+      <a href="/accounts/login">Log In</a>
+      <a href="/accounts/signup">Sign Up</a>
+    <% } %>
+  </body>
+</html>

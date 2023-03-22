@@ -21,6 +21,7 @@
   "dependencies": {
     "@angular/core": "^15.2.3",
     "@angular/platform-browser-dynamic": "^15.2.3",
+    "@aws-sdk/abort-controller": "^3.296.0",
     "aws-sdk": "^2.1339.0",
     "bcrypt-nodejs": "^0.0.3",
     "connect-flash": "^0.1.1",

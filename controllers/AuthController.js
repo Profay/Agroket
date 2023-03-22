@@ -1,6 +1,7 @@
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const config = require("../config");
+const validate = require("../middlewares/validate");
 
 class AuthController {
   static async signUp(req, res) {
@@ -12,30 +13,35 @@ class AuthController {
           message: "Account with this email already exists",
         });
       }
+      
+          // Validate user input
+          const validInput = await validate(req.body)
+          if (!validInput.success) {
+            return res.status(400).json({
+              success: false,
+              message: validInput.message,
+            });
+          }
 
-      const user = new User()
-        user.name = req.body.name;
-        user.email = req.body.email;
-        user.password = req.body.password;
-        user.picture = user.gravatar();
-        user.isSeller = req.body.isSeller;
+          const user = new User()
+            user.name = req.body.name;
+            user.email = req.body.email;
+            user.password = req.body.password;
+            user.picture = user.gravatar();
+            user.isSeller = req.body.isSeller === 'on';
 
-      await user.save();
-      const token = jwt.sign({ user }, config.secret, { expiresIn: "7d" });
+          await user.save();
+          const token = jwt.sign({ user }, config.secret, { expiresIn: "7d" });
 
-      res.status(201).json({
-        success: true,
-        message: "Account created successfully",
-        token,
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({
-        success: false,
-        message: "Something went wrong. Please try again later",
-      });
-    }
-  }
+          res.redirect('/accounts/home?loggedIn=true&userName=' + user.name);
+        } catch (error) {
+          console.error(error);
+          res.status(500).json({
+            success: false,
+            message: "Something went wrong. Please try again later",
+          });
+        }
+      }
 
     static async login(req, res) {
       try {
@@ -56,11 +62,7 @@ class AuthController {
           return;
         }
         const token = jwt.sign({ user }, config.secret, { expiresIn: "7d" });
-        res.json({
-          success: true,
-          message: "Enjoy your token",
-          token,
-        });
+        res.redirect('/accounts/home?loggedIn=true&userName=' + user.name);
       } catch (error) {
         console.error(error);
         res.status(500).json({

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sign Up</title>
+  </head>
+  <body>
+    <h1>Sign Up</h1>
+    <form action="/accounts/signUp" method="post">
+      <div>
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" required>
+      </div>
+      <div>
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+      <div>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+      <div>
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required>
+      </div>
+      <div>
+        <label for="isSeller">Sign up as a seller?</label>
+        <input type="checkbox" id="isSeller" name="isSeller">
+      </div>
+      <button type="submit">Sign Up</button>
+    </form>
+    <br>
+    <p>Already have an account? <a href="/accounts/login">Login</a></p>
+  </body>
+</html>

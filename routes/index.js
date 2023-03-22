@@ -6,7 +6,29 @@ const jwt = require("../middlewares/jwt");
 const OrderController = require("../controllers/OrderController");
 
 
-router.post('/signup', AuthController.signUp);
+
+router.get('/home', function(req, res) {
+    const loggedIn = req.query.loggedIn === 'true';
+    const user = {
+      name: req.query.userName
+    };
+    res.render('home', { loggedIn, user });
+  });
+router.get('/logout', function(req, res) {
+    // Clear the JWT token from the client's cookies
+    res.clearCookie('jwt');
+  
+    // Redirect to the homepage
+    res.redirect('/accounts/home');
+  });
+  
+router.get('/signup', (req, res) => {
+    res.render('signup')
+});
+router.get('/login', (req, res) => {
+    res.render('login')
+});
+router.post('/signUp', AuthController.signUp);
 router.post('/login', AuthController.login);
 router.get('/profile', jwt, UserController.getProfile);
 router.post('/profile', jwt, UserController.updateProfile);

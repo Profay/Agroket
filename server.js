@@ -4,6 +4,7 @@ const bodyParser = require("body-parser"); //body-parser to parse the JSON Data
 const mongoose = require("mongoose");
 const cors = require("cors"); //Package to connect middle-ware or cross-platform applications
 const router = require("./routes");
+const ejs = require('ejs');
 require('dotenv').config();
 
 
@@ -20,6 +21,8 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(morgan("dev"));
 app.use(cors());
+app.set('view engine', 'ejs');
+
 
 const users = require("./routes/index");
 const main = require("./routes/main");
