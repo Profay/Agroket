@@ -1,47 +1,40 @@
-import { createClient } from 'redis';
-import { promisify } from 'util';
+require('dotenv').config();
+const redis = require('redis')
+const client = redis.createClient({
+  password: process.env.REDIS_PW,
+  socket: {
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT || 14071,
+  }
+});
+(async () => {
+  await client.connect();
+  client.on('error', err => console.log('Redis Client Error', err));
+  client.on('ready', () => console.log('Redis Client Connected'));
+})();
 
-// class to define methods for commonly used redis commands
-class RedisClient {
-  constructor() {
-    this.client = createClient();
-    this.client.on('error', (error) => {
-      console.log(`Redis client not connected to server: ${error}`);
+class redistoken {
+  static async cacheToken(token) {
+    client.set('my_token', token, (err) => {
+      if (err) {
+        console.error('Error caching token:', err);
+      } else {
+        console.log('Token cached successfully.');
+      }
     });
-    this.client.on('connect', () => {
-      console.log('Redis client connected to server');
+  }
+
+  static async getToken() {
+    return new Promise((resolve, reject) => {
+      client.get('my_token', (err, token) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(token);
+        }
+      });
     });
-  }
-
-  // check connection status and report
-  isAlive() {
-    if (this.client.connected) {
-      return true;
-    }
-    return false;
-  }
-
-  // get value for given key from redis server
-  async get(key) {
-    const redisGet = promisify(this.client.get).bind(this.client);
-    const value = await redisGet(key);
-    return value;
-  }
-
-  // set key value pair to redis server
-  async set(key, value, time) {
-    const redisSet = promisify(this.client.set).bind(this.client);
-    await redisSet(key, value);
-    await this.client.expire(key, time);
-  }
-
-  // del key vale pair from redis server
-  async del(key) {
-    const redisDel = promisify(this.client.del).bind(this.client);
-    await redisDel(key);
   }
 }
 
-const redisClient = new RedisClient();
-
-module.exports = redisClient;
+module.exports = redistoken;

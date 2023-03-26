@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const SellerController = require("../controllers/SellerController");
-const jwt = require("../middlewares/jwt");
+const checkjwt = require("../middlewares/checkjwt");
 
 
 const upload = require("../middlewares/upload");
@@ -10,9 +10,9 @@ const upload = require("../middlewares/upload");
 
 
 router.post("/products/:id", SellerController.findProductById);
-router.get("/products", jwt, SellerController.getProducts);
-router.post("/products", [jwt, upload.single("product_picture")], SellerController.addProduct);
-router.post("/editproducts", [jwt, upload.single("product_picture")], SellerController.updateProduct);
+router.get("/products", checkjwt, SellerController.getProducts);
+router.post("/products", [checkjwt, upload.single("product_picture")], SellerController.addProduct);
+router.post("/editproducts", [checkjwt, upload.single("product_picture")], SellerController.updateProduct);
 router.get("/hoaxer/test", SellerController.hoaxerTest);
 
 

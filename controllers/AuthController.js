@@ -2,6 +2,7 @@ const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 const config = require("../config");
 const validate = require("../middlewares/validate");
+const redistoken = require('../utils/redis');
 
 class AuthController {
   static async signUp(req, res) {
@@ -23,10 +24,10 @@ class AuthController {
       user.password = req.body.password;
       user.picture = user.gravatar();
       user.isSeller = req.body.isSeller === 'on';
-  
       await user.save();
-      const token = jwt.sign({ user }, config.secret, { expiresIn: "7d" });
   
+      const token = jwt.sign({ user }, config.secret, { expiresIn: "7d" });
+      await redistoken.cacheToken(token);
       res.redirect('/accounts/home?loggedIn=true&userName=' + user.name);
     } catch (error) {
       console.error(error);
@@ -48,8 +49,7 @@ class AuthController {
         return;
       }
       const token = jwt.sign({ user }, config.secret, { expiresIn: '7d' });
-      res.cookie('token', token, { httpOnly: true, maxAge: 604800000 });
-      res.redirect('/accounts/profile');
+      redistoken.cacheToken(token);
     } catch (error) {
       console.error(error);
       res.status(500).render('error', { error: 'Internal server error' });

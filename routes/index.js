@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const AuthController = require("../controllers/AuthController");
 const UserController = require("../controllers/UserController");
-const jwt = require("../middlewares/jwt");
+const checkjwt = require("../middlewares/checkjwt");
 const OrderController = require("../controllers/OrderController");
 
 
@@ -15,8 +15,8 @@ router.get('/home', function(req, res) {
     res.render('home', { loggedIn, user });
   });
 router.get('/logout', function(req, res) {
-    // Clear the JWT token from the client's cookies
-    res.clearCookie('jwt');
+    // Clear the checkjwt token from the client's cookies
+    res.clearCookie('checkjwt');
   
     // Redirect to the homepage
     res.redirect('/accounts/home');
@@ -30,12 +30,12 @@ router.get('/login', (req, res) => {
 });
 router.post('/signUp', AuthController.signUp);
 router.post('/login', AuthController.login);
-router.get('/profile', jwt, UserController.getProfile);
-router.post('/profile', jwt, UserController.updateProfile);
-router.get('/address', jwt, UserController.getAddress);
-router.post('/address', jwt, UserController.updateAddress);
-router.get('/orders', jwt, OrderController.getOrder);
-router.get('/orders/:id', jwt, OrderController.getOrderById);
+router.get('/profile', checkjwt, UserController.getProfile);
+router.post('/profile', checkjwt, UserController.updateProfile);
+router.get('/address', checkjwt, UserController.getAddress);
+router.post('/address', checkjwt, UserController.updateAddress);
+router.get('/orders', checkjwt, OrderController.getOrder);
+router.get('/orders/:id', checkjwt, OrderController.getOrderById);
 router.get('/orders/:id/delete', OrderController.deleteOrder);
 router.post('/orders', OrderController.postOrder);
 

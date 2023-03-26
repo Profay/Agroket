@@ -16,6 +16,7 @@ const UserSchema = new Schema({
   name: String,
   password: String,
   picture: String,
+  token: String,
   isSeller: {
     type: Boolean,
     default: false

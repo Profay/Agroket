@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Categories</title>
+  </head>
+  <body>
+    <% if (categories) { %>
+      <h1>Categories</h1>
+      <ul>
+        <% categories.forEach(function(category) { %>
+          <li><a href="/categories/<%= category._id %>"><%= category.name %></a></li>
+        <% }); %>
+      </ul>
+      <a href="/categories/new">New Category</a>
+    <% } else { %>
+      <h1>Category Details</h1>
+      <p><%= categoryName %></p>
+      <p>Number of products: <%= totalProducts %></p>
+      <ul>
+        <% products.forEach(function(product) { %>
+          <li>
+            <a href="/products/<%= product._id %>"><%= product.name %></a>
+          </li>
+        <% }); %>
+      </ul>
+      <% if (pages > 1) { %>
+        <div>
+          <% for (let i = 0; i < pages; i++) { %>
+            <a href="/categories/<%= category._id %>?page=<%= i %>"><%= i + 1 %></a>
+          <% } %>
+        </div>
+      <% } %>
+    <% } %>
+  </body>
+</html>

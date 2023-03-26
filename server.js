@@ -1,17 +1,30 @@
+const redis = require('redis');
 const express = require("express");
-const morgan = require("morgan"); //Morgan is used for logging request details
-const bodyParser = require("body-parser"); //body-parser to parse the JSON Data
+const morgan = require("morgan"); 
+const bodyParser = require("body-parser"); 
 const mongoose = require("mongoose");
-const cors = require("cors"); //Package to connect middle-ware or cross-platform applications
+const cors = require("cors");
 const router = require("./routes");
 const ejs = require('ejs');
 require('dotenv').config();
 
-
 const port = process.env.PORT || 9000;
+
+const client = redis.createClient({
+  password: process.env.REDIS_PW,
+  socket: {
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT || 14071,
+    }
+});
 
 const app = express();
 
+(async () => {
+  await client.connect();
+  client.on('error', err => console.log('Redis Client Error', err));
+  client.on('ready', () => console.log('Redis Client Connected'));
+})();
 
 
 
@@ -33,14 +46,12 @@ app.use("/", main);
 app.use("/accounts", users);
 app.use("/seller", sellers);
 
-
-
 mongoose.connect(process.env.MONGO_URI)
-.then(() => {
-  app.listen(port, () => {
-    console.log(`listening on port ${port}`);
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`listening on port ${port}`);
+    });
+  })
+  .catch((err) => {
+    console.log(err);
   });
-})
-.catch((err) => {
-  console.log(err);
-});

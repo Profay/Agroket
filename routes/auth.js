@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const AuthController = require("../controllers/AuthController");
 const UserController = require("../controllers/UserController");
-const jwt = require("../middlewares/jwt");
-const OrderController = require("../controllers/OrderController");
+const checkjwt = require("../middlewares/checkjwt");
+const OrderController = require("../controllers/OrderCo1ntroller");
+
 
 
 router.get('/', (req, res) => {
@@ -25,23 +26,23 @@ router.get('/login', (req, res) => {
 
 router.post('/login', AuthController.login);
 
-router.get('/profile', jwt, UserController.getProfile);
+router.get('/profile', checkjwt, UserController.getProfile);
 
-router.post('/profile', jwt, UserController.updateProfile);
+router.post('/profile', checkjwt, UserController.updateProfile);
 
-router.get('/address', jwt, (req, res) => {
+router.get('/address', checkjwt, (req, res) => {
   // render the address page HTML file
   res.render('address');
 });
 
-router.post('/address', jwt, UserController.updateAddress);
+router.post('/address', checkjwt, UserController.updateAddress);
 
-router.get('/orders', jwt, (req, res) => {
+router.get('/orders', checkjwt, (req, res) => {
   // render the orders page HTML file
   res.render('orders');
 });
 
-router.get('/orders/:id', jwt, OrderController.getOrderById);
+router.get('/orders/:id', checkjwt, OrderController.getOrderById);
 
 router.get('/orders/:id/delete', OrderController.deleteOrder);
 
