@@ -1,12 +1,13 @@
 //Middle ware file using JSON Web Token for authentication 
 const jwt = require('jsonwebtoken');
 const config = require('../config');
-const redistoken = require('../utils/redis');
 
 module.exports = async function (req, res, next) {
-  const token = await redistoken.getToken();
-  console.log(token);
-
+  const token = req.cookies.token
+  if (cookie === undefined) {
+    const token = jwt.sign({ user }, config.secret, { expiresIn: "7d" });
+    res.cookie('token', token, {maxAge: 604800, httpOnly: true});
+  } else {
   if (token) {
     jwt.verify(token, config.secret, function (err, decoded) {
       if (err) {
@@ -29,4 +30,5 @@ module.exports = async function (req, res, next) {
     });
 
   }
+}
 }

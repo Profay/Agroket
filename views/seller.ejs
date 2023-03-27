@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Seller Products</title>
+  </head>
+  <body>
+    <h1>Seller Products</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Product ID</th>
+          <th>Title</th>
+          <th>Price</th>
+          <th>Quantity</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% products.forEach(function(product) { %>
+          <tr>
+            <td><%= product._id %></td>
+            <td><%= product.title %></td>
+            <td><%= product.price %></td>
+            <td><%= product.quantity %></td>
+            <td>
+              <a href="/products/<%= product._id %>">View</a>
+              <a href="/editproducts/<%= product._id %>">Edit</a>
+            </td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </body>
+</html>

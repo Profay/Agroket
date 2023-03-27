@@ -2,22 +2,83 @@
 <html>
   <head>
     <title>Login</title>
+    <style>
+      body {
+        background-color: #8c9992;
+        font-family: Arial, sans-serif;
+      }
+
+      h1 {
+        color: #006600;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        color: #006600;
+      }
+
+      input[type="email"],
+      input[type="password"] {
+        border: 1px solid #006600;
+        padding: 5px;
+        border-radius: 3px;
+        font-size: 16px;
+        color: #333333;
+        width: 100%;
+        margin-bottom: 15px;
+      }
+
+      button[type="submit"] {
+        background-color: #006600;
+        color: #ffffff;
+        border: none;
+        padding: 10px 15px;
+        font-size: 16px;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+
+      button[type="submit"]:hover {
+        background-color: #008000;
+      }
+
+      a {
+        color: #006600;
+      }
+
+      /* Center the form on the page */
+      .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      form {
+        width: 300px;
+      }
+    </style>
   </head>
   <body>
-    <h1>Login</h1>
-    <% if (typeof error !== 'undefined') { %>
-      <div style="color: red;"><%= error %></div>
-    <% } %>
-    <form method="POST" action="/accounts/login">
-      <label for="email">Email:</label>
-      <input type="email" id="email" name="email" required>
+    <div class="container">
+      <form method="POST" action="/accounts/login">
+        <h1>Login</h1>
+        <div>
+        <% if (typeof error !== 'undefined') { %>
+          <div style="color: red;"><%= error %></div>
+        <% } %>
+      </div>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
 
-      <label for="password">Password:</label>
-      <input type="password" id="password" name="password" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
 
-      <button type="submit">Login</button>
-    </form>
-    <br>
-    <p>Don't have an account? <a href="/accounts/signUp">Sign Up</a></p>
+        <button type="submit">Login</button>
+        <br>
+        <p>Don't have an account? <a href="/accounts/signUp">Sign Up</a></p>
+      </form>
+    </div>
   </body>
 </html>

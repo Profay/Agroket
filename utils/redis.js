@@ -7,15 +7,14 @@ const client = redis.createClient({
     port: process.env.REDIS_PORT || 14071,
   }
 });
-(async () => {
-  await client.connect();
-  client.on('error', err => console.log('Redis Client Error', err));
-  client.on('ready', () => console.log('Redis Client Connected'));
-})();
 
-class redistoken {
-  static async cacheToken(token) {
-    client.set('my_token', token, (err) => {
+  const cacheToken = async (token) => {
+    client.on('error', err => {
+      console.log('Redis client error.', err);
+    })
+    await client.connect();
+    console.log('Connected to Redis');
+    await client.set('my_token', token, (err) => {
       if (err) {
         console.error('Error caching token:', err);
       } else {
@@ -24,7 +23,12 @@ class redistoken {
     });
   }
 
-  static async getToken() {
+  const getToken = async () => {
+    client.on('error', err => {
+      console.log('Redis client error.', err);
+    })
+    await client.connect();
+    console.log('Connected to Redis');
     return new Promise((resolve, reject) => {
       client.get('my_token', (err, token) => {
         if (err) {
@@ -33,8 +37,7 @@ class redistoken {
           resolve(token);
         }
       });
-    });
+    })
   }
-}
 
-module.exports = redistoken;
+module.exports = {getToken, cacheToken}

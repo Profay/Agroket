@@ -1,0 +1,44 @@
+body {
+    background-color: #f2f2f2;
+    font-family: Arial, sans-serif;
+  }
+  
+  h1 {
+    color: #006600;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 5px;
+    color: #006600;
+  }
+  
+  input[type="email"],
+  input[type="password"] {
+    border: 1px solid #006600;
+    padding: 5px;
+    border-radius: 3px;
+    font-size: 16px;
+    color: #333333;
+    width: 100%;
+    margin-bottom: 15px;
+  }
+  
+  button[type="submit"] {
+    background-color: #006600;
+    color: #ffffff;
+    border: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  
+  button[type="submit"]:hover {
+    background-color: #008000;
+  }
+  
+  a {
+    color: #006600;
+  }
+  

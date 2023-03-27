@@ -49,7 +49,9 @@ class AuthController {
         return;
       }
       const token = jwt.sign({ user }, config.secret, { expiresIn: '7d' });
-      redistoken.cacheToken(token);
+      res.cookie('token', token, {maxAge: 604800, httpOnly: true});
+      console.log('cookie created')
+      res.redirect('/accounts/profile');
     } catch (error) {
       console.error(error);
       res.status(500).render('error', { error: 'Internal server error' });
