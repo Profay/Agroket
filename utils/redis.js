@@ -21,6 +21,7 @@ const client = redis.createClient({
         console.log('Token cached successfully.');
       }
     });
+    await client.disconnect()
   }
 
   const getToken = async () => {
@@ -38,6 +39,7 @@ const client = redis.createClient({
         }
       });
     })
+    await client.disconnect()
   }
 
 module.exports = {getToken, cacheToken}

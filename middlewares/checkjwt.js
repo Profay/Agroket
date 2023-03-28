@@ -1,34 +1,30 @@
 //Middle ware file using JSON Web Token for authentication 
 const jwt = require('jsonwebtoken');
-const config = require('../config');
+const secret = process.env.JWT_SECRET;
+const { LocalStorage } = require('node-localstorage');
+const localStorage = LocalStorage('./scratch');
+const redis = require('../utils/redis')
 
 module.exports = async function (req, res, next) {
+  //const token = localStorage.getItem('Token');
+  //const token = redis.getToken()
   const token = req.cookies.token
-  if (cookie === undefined) {
-    const token = jwt.sign({ user }, config.secret, { expiresIn: "7d" });
-    res.cookie('token', token, {maxAge: 604800, httpOnly: true});
-  } else {
   if (token) {
-    jwt.verify(token, config.secret, function (err, decoded) {
+    jwt.verify(token, secret, function (err, decoded) {
       if (err) {
         res.json({
           success: false,
           message: 'Failed to authenticate token'
         });
       } else {
-
         req.decoded = decoded;
         next();
-
       }
     });
-
   } else {
     res.status(403).json({
       success: false,
       message: 'No token provided'
     });
-
-  }
-}
+  }  
 }

@@ -1,8 +1,10 @@
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
-const config = require("../config");
 const validate = require("../middlewares/validate");
-const redistoken = require('../utils/redis');
+const { LocalStorage } = require('node-localstorage');
+const localStorage = new LocalStorage('./scratch');
+const redis = require('../utils/redis')
+const secret = process.env.JWT_SECRET;
 
 class AuthController {
   static async signUp(req, res) {
@@ -26,9 +28,10 @@ class AuthController {
       user.isSeller = req.body.isSeller === 'on';
       await user.save();
   
-      const token = jwt.sign({ user }, config.secret, { expiresIn: "7d" });
-      await redistoken.cacheToken(token);
-      res.redirect('/accounts/home?loggedIn=true&userName=' + user.name);
+      const token = jwt.sign({ user }, secret, { expiresIn: "7d" });
+      res.cookie('token', token, { maxAge: 86400000, httpOnly: true });
+      console.log('cookie created')
+      res.redirect('/accounts/profile');
     } catch (error) {
       console.error(error);
       res.render('signup', { error: "Something went wrong. Please try again later" });
@@ -48,8 +51,10 @@ class AuthController {
         res.status(401).render('login', { error: 'Incorrect password' });
         return;
       }
-      const token = jwt.sign({ user }, config.secret, { expiresIn: '7d' });
-      res.cookie('token', token, {maxAge: 604800, httpOnly: true});
+      const token = jwt.sign({ user }, secret, { expiresIn: '7d' });
+      //localStorage.setItem('Token', token);
+      //await redis.cacheToken(token)
+      res.cookie('token', token, { maxAge: 86400000, httpOnly: true })
       console.log('cookie created')
       res.redirect('/accounts/profile');
     } catch (error) {

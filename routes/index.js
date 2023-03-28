@@ -15,19 +15,12 @@ router.get('/home', function(req, res) {
     res.render('home', { loggedIn, user });
   });
 router.get('/logout', function(req, res) {
-    // Clear the checkjwt token from the client's cookies
     res.clearCookie('checkjwt');
-  
-    // Redirect to the homepage
-    res.redirect('/accounts/home');
-  });
-  
+    res.redirect('/accounts/home');}); 
 router.get('/signup', (req, res) => {
-    res.render('signup')
-});
+    res.render('signup')});
 router.get('/login', (req, res) => {
-    res.render('login')
-});
+    res.render('login')});
 router.post('/signUp', AuthController.signUp);
 router.post('/login', AuthController.login);
 router.get('/profile', checkjwt, UserController.getProfile);

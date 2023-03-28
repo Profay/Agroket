@@ -12,7 +12,7 @@ class SellerController {
   
       res.render("seller", { 
         title: "Seller Products", 
-        products: products 
+        product: products 
       });
     } catch (error) {
       console.error(error);
