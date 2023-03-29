@@ -20,11 +20,7 @@
 <h1>Add Product</h1>
   <form action="/seller/products" method="post" enctype="multipart/form-data">
     <label for="category">Category:</label>
-    <select id="category" name="categoryId">
-      <% categories.forEach(function(category) { %>
-        <option value="<%= category._id %>"><%= category.name %></option>
-      <% }); %>
-    </select><br><br>
+    <input type="text" id="categoryId" name="categoryId" required><br><br>
     <label for="title">Title:</label>
     <input type="text" id="title" name="title" required><br><br>
     <label for="price">Price:</label>

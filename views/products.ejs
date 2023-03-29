@@ -9,11 +9,12 @@
     <% if (success && products.length > 0) { %>
         <% products.forEach(function(product) { %>
             <div>
-                <h2><%= product.name %></h2>
+                <h2><%= product.title%></h2>
+                <img src="<%= product.image %>" alt="<%= product.name %>"
                 <p><%= product.description %></p>
                 <p>Price: <%= product.price %></p>
-                <p>Category: <%= product.category.name %></p>
-                <p>Owner: <%= product.owner.name %></p>
+                <p>Category: <%= product.category?.name %></p>
+                <p>Owner: <%= product.owner?.name %></p>
             </div>
         <% }); %>
         <div>
@@ -24,7 +25,7 @@
                 <a href="?page=<%= currentPage + 1 %>">Next</a>
             <% } %>
         </div>
-    <% } else if (success && products.length === 0) { %>
+         <% } else if (success && products.length === 0) { %>
         <p>No products found.</p>
     <% } else { %>
         <p>Error: <%= message %></p>

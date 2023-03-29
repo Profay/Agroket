@@ -37,8 +37,10 @@ static async findProductById(req, res, next) {
 // Add a new product
 static async addProduct(req, res, next) {
   const product = new Product();
+  product.name = req.body.name;
   product.owner = req.decoded.user._id;
   product.category = req.body.categoryId;
+  product.category.name = req.body.category.name;
   product.title = req.body.title;
   product.price = req.body.price;
   product.quantity = req.body.quantity;
