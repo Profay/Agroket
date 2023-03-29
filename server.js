@@ -5,10 +5,19 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const path = require('path');
 const cookieParser = require('cookie-parser')
+const session = require('express-session');
 require('dotenv').config();
 
 const port = process.env.PORT || 9000;
 const app = express();
+
+
+app.use(session({
+    secret: process.env.SESSION_KEY,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true }
+}));
 
 
 

@@ -15,6 +15,10 @@ const OrderSchema = new Schema({
     type: Number,
     default: 0
   },
+  cart: {
+    type: Object,
+    required: true,
+  },
   products: [{
     product: {
       type: Schema.Types.ObjectId,
