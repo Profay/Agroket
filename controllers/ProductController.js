@@ -19,8 +19,6 @@ class ProductController {
             .exec();
 
         const [totalProducts, products] = await Promise.all([countPromise, productsPromise]);
-        console.log(products)
-
         res.render("products.ejs", {
             success: true,
             message: "Product",
@@ -44,7 +42,6 @@ class ProductController {
       const product = await Product.findById(req.params.id)
         .populate("category")
         .populate("owner")
-        .deepPopulate("reviews.owner")
         .exec();
   
       if (!product) {

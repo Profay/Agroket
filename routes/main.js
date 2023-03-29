@@ -5,7 +5,7 @@ const ProductController = require('../controllers/ProductController');
 
 
 router.get('/products', ProductController.getProducts)
-router.get('/products/:id', ProductController.getProductById)
+router.get('/product/:id', ProductController.getProductById)
 router.post('/products/:id/qty', ProductController.updateProducts)
 router.get('/categories', ProductController.getCategory)
 router.get('/categories/new', (req, res, next) => {
