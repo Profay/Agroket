@@ -6,17 +6,24 @@ const cors = require("cors");
 const path = require('path');
 const cookieParser = require('cookie-parser')
 const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
 require('dotenv').config();
 
 const port = process.env.PORT || 9000;
 const app = express();
 const ONE_WEEK = 7 * 24 * 60 * 60 * 10000;
+const store = new MongoDBStore({
+  uri: process.env.MONGO_URI,
+  collection: 'sessions'
+});
+
 
 
 app.use(session({
     secret: process.env.SESSION_KEY,
     resave: false,
     saveUninitialized: true,
+    store: store,
     cookie: {
       maxAge: ONE_WEEK
     }
