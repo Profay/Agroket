@@ -4,4 +4,3 @@ package.json
 .frontend_design
 redis-6.0.10
 redis-6.0.10.tar.gz
-.env

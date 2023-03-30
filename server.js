@@ -10,7 +10,7 @@ require('dotenv').config();
 
 const port = process.env.PORT || 9000;
 const app = express();
-const ONE_WEEK = 7 * 24 * 60 * 60 * 1000;
+const ONE_WEEK = 7 * 24 * 60 * 60 * 10000;
 
 
 app.use(session({
