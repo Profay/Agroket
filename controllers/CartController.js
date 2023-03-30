@@ -16,7 +16,7 @@ class CartController {
           req.session.cart = cart;
           console.log('Session cart:', req.session.cart);
       
-          res.redirect('/cart');
+          res.redirect('/products');
         } catch (err) {
           console.error(err);
           res.redirect('/products');
