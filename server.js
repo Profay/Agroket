@@ -10,13 +10,16 @@ require('dotenv').config();
 
 const port = process.env.PORT || 9000;
 const app = express();
+const ONE_WEEK = 7 * 24 * 60 * 60 * 1000;
 
 
 app.use(session({
     secret: process.env.SESSION_KEY,
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: true }
+    cookie: {
+      maxAge: ONE_WEEK
+    }
 }));
 
 
