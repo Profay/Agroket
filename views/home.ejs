@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>My Awesome Website</title>
+    <title>Agroket</title>
   </head>
   <body>
-    <h1>Welcome to My Awesome Website!</h1>
+    <h1>Welcome to Agroket!</h1>
+    <h3>The Marketplace for your Agricultural Services</h3>
     
-    <% if (loggedIn) { %>
+    <% if (user) { %>
       <p>Hello, <%= user.name %>!</p>
       <a href="/accounts/logout">Log Out</a>
     <% } else { %>

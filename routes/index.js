@@ -4,18 +4,13 @@ const AuthController = require("../controllers/AuthController");
 const UserController = require("../controllers/UserController");
 const checkjwt = require("../middlewares/checkjwt");
 const OrderController = require("../controllers/OrderController");
+const AppController = require('../controllers/AppController');
 
 
 
-router.get('/home', function(req, res) {
-    const loggedIn = req.query.loggedIn === 'true';
-    const user = {
-      name: req.query.userName
-    };
-    res.render('home', { loggedIn, user });
-  });
+router.get('/home', checkjwt, AppController.homePage);
 router.get('/logout', function(req, res) {
-    res.clearCookie('checkjwt');
+    res.clearCookie('token');
     res.redirect('/accounts/home');}); 
 router.get('/signup', (req, res) => {
     res.render('signup')});

@@ -22,9 +22,6 @@ module.exports = async function (req, res, next) {
       }
     });
   } else {
-    res.status(403).json({
-      success: false,
-      message: 'No token provided'
-    });
+    res.render('home', {user: null});
   }  
 }
