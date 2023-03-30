@@ -1,9 +1,12 @@
 const Product = require("../models/productModel");
+const User = require("../models/userModel");
 const hoaxer = require("hoaxer");
 
 
 class SellerController {
   static async getProducts(req, res, next) {
+    const user = await User.findOne({ _id: req.decoded.user._id });
+    if (user.isSeller === true) {
     try {
       const products = await Product.find({ owner: req.decoded.user._id })
         .populate("owner")
@@ -18,6 +21,9 @@ class SellerController {
       console.error(error);
       res.status(500).send("Failed to get products.");
     }
+  } else {
+    res.status(500).send("You must register as a seller.")
+  }
   }
 
   // Find a product by ID
