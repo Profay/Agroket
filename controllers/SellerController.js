@@ -28,6 +28,8 @@ class SellerController {
 
   // Find a product by ID
 static async findProductById(req, res, next) {
+  const user = await User.findOne({ _id: req.decoded.user._id });
+    if (user.isSeller === true) {
   try {
     const result = await Product.findByIdAndUpdate(
       { _id: req.params.id },
@@ -37,11 +39,15 @@ static async findProductById(req, res, next) {
   } catch (error) {
     console.error(error);
     res.status(500).send("Failed to update product.");
-  }
+  }  
+  }else {
+  res.status(500).send("You must register as a seller.")
 }
-
+}
 // Add a new product
 static async addProduct(req, res, next) {
+  const user = await User.findOne({ _id: req.decoded.user._id });
+    if (user.isSeller === true) {
   const product = new Product();
   product.name = req.body.name;
   product.owner = req.decoded.user._id;
@@ -56,9 +62,14 @@ static async addProduct(req, res, next) {
   product.save();
   res.redirect("/seller/products");
 }
-
+  else {
+    res.status(500).send("You must register as a seller.")
+  }
+}
 // Update an existing product
 static async updateProduct(req, res, next) {
+  const user = await User.findOne({ _id: req.decoded.user._id });
+    if (user.isSeller === true) {
   try {
     const result = await Product.findByIdAndUpdate(
       { _id: req.body.id },
@@ -82,18 +93,24 @@ static async updateProduct(req, res, next) {
     });
   }
 }
+else {
+  res.status(500).send("You must register as a seller.")
+}
+}
 
 // Test function to add fake products
 static async hoaxerTest(req, res, next) {
+  const user = await User.findOne({ _id: req.decoded.user._id });
+    if (user.isSeller === true) {
   try {
     for (let i = 0; i < 15; i++) {
       let product = new Product();
-      product.category = "5acc1902580ba509c6622bd7";
-      product.owner = "5acbfed6571913c9a9e98135";
+      product.owner = req.decoded.user._id;
       product.image = hoaxer.image.cats();
       product.title = hoaxer.commerce.productName();
       product.description = hoaxer.lorem.words();
       product.price = hoaxer.commerce.price();
+      product.quantity = hoaxer.random.number({ min: 1, max: 100 })
       await product.save();
     }
 
@@ -101,6 +118,10 @@ static async hoaxerTest(req, res, next) {
   } catch (error) {
     next(error);
   }
+}
+else {
+  res.status(500).send("You must register as a seller.")
+}
 }
 
 }

@@ -9,8 +9,12 @@
     <p><strong>Quantity:</strong> <%= product.quantity %></p>
     <p><strong>Description:</strong> <%= product.description %></p>
     <img src="<%= product.image %>">
-    <form action="/products/<%= product._id %>" method="post">
-      <button type="submit">Delete Product</button>
+    <form action="/seller/editproducts" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="id" value="<%= product._id %>">
+    <p><input type="checkbox" name="isDeleted" <% if(product.isDeleted) { %>checked<% } %> value="true"></p>
+    <label for="isDeleted">Delete this product?</label>
+    <button type="submit">Update Product</button>
+
     </form>
     <hr>
   </div>
